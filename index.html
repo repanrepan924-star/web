@@ -6,13 +6,14 @@
 <title>Portal Pengaduan Warga — Kelurahan Songgokerto</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="img/aurora.jpg">
 <style>
   :root{
     --ink:#142033;
     --ink-soft:#334155;
     --paper:#F1ECDD;
     --paper-alt:#E7DFC7;
-    --card:rgba(251,248,239,.9);
+    --card:rgba(251,248,239,.72);
     --pine:#1F3D2E;
     --pine-light:#2E5642;
     --rust:#A8461F;
@@ -24,7 +25,13 @@
     --radius:2px;
   }
   *{box-sizing:border-box;}
-  html{scroll-behavior:smooth; min-height:100%; background:#030817 url('img/aurora.jpg') center / cover no-repeat;}
+  html{
+    scroll-behavior:smooth;
+    min-height:100%;
+    background:
+      linear-gradient(135deg, #063b78 0%, #087ab8 48%, #10245c 100%),
+      url('img/aurora.jpg') center / cover no-repeat;
+  }
   body::before{
     position:fixed;
     inset:0;
@@ -32,9 +39,12 @@
     pointer-events:none;
     overflow:hidden;
     content:"";
-    background:
-      linear-gradient(115deg, rgba(3,18,48,.78), rgba(0,93,170,.28) 52%, rgba(0,9,28,.44)),
-      url('img/aurora.jpg') 65% center / cover no-repeat;
+    background-image:
+      linear-gradient(115deg, rgba(3,18,48,.42), rgba(0,93,170,.10) 52%, rgba(0,9,28,.24)),
+      url('img/aurora.jpg');
+    background-position:65% center;
+    background-size:cover;
+    background-repeat:no-repeat;
     animation:aurora-drift 24s ease-in-out infinite alternate;
     transform-origin:center;
   }
@@ -48,7 +58,9 @@
   body{
     margin:0;
     min-height:100vh;
-    background:#030817 url('img/aurora.jpg') center / cover no-repeat;
+    background:
+      linear-gradient(135deg, #063b78 0%, #087ab8 48%, #10245c 100%),
+      url('img/aurora.jpg') center / cover no-repeat;
     color:var(--ink);
     font-family:'Public Sans', sans-serif;
     font-size:16px;
@@ -70,7 +82,7 @@
 
   /* ===== Kop Surat / Letterhead ===== */
   .letterhead{
-    background:rgba(12,55,43,.84);
+    background:rgba(12,55,43,.66);
     color:#F1ECDD;
     padding:22px 20px 0;
   }
@@ -111,7 +123,7 @@
     display:flex;
     gap:4px;
     padding:14px 20px 0;
-    background:rgba(12,55,43,.84);
+    background:rgba(12,55,43,.66);
     flex-wrap:wrap;
   }
   .tab{
@@ -150,7 +162,7 @@
   .admin-auth-box,
   .summary-card,
   .admin-card{
-    background:rgba(251,248,239,.78);
+    background:rgba(251,248,239,.62);
     backdrop-filter:blur(3px);
   }
   .admin-auth-box h3{
@@ -228,7 +240,7 @@
     margin-top:4px;
   }
   .admin-card{
-    background:rgba(251,248,239,.78);
+    background:rgba(251,248,239,.62);
     border:1px solid var(--line);
     border-radius:var(--radius);
     padding:18px;
@@ -295,10 +307,8 @@
     animation:fade .25s ease;
     padding:18px;
     border:1px solid rgba(255,255,255,.18);
-    background:#E8F0FF;
-    background:
-      linear-gradient(rgba(242,247,255,.68), rgba(242,247,255,.68)),
-      url('img/aurora.jpg') center center / cover no-repeat;
+    background:rgba(242,247,255,.52);
+    backdrop-filter:blur(1px);
   }
   @media (prefers-reduced-motion: reduce){ .panel.active{ animation:none; } }
   @keyframes fade{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;} }
