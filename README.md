@@ -1,4 +1,4 @@
-# Portal Pengaduan Warga Kelurahan
+# Portal Pengaduan Warga Kelurahan Songgokerto
 
 Website satu halaman untuk menerima dan mengelola laporan/pengaduan warga di tingkat kelurahan. Warga mengisi formulir, mendapat nomor tiket, lalu petugas dapat memantau dan mengubah status laporan (Menunggu → Diproses → Selesai) lewat halaman yang sama.
 
@@ -24,10 +24,14 @@ Tidak ada proses instalasi, tidak butuh internet, tidak butuh database eksternal
 
 Website ini awalnya dibuat sebagai *artifact* di Claude.ai, yang menyediakan penyimpanan otomatis (`window.storage`) sehingga data laporan tersimpan dan bisa dilihat bersama oleh siapa pun yang membuka artifact tersebut.
 
-Setelah dijadikan file mandiri seperti ini (dibuka langsung di browser atau di-hosting sendiri), fitur `window.storage` **tidak tersedia**. Konsekuensinya:
+Setelah dijadikan file mandiri seperti ini, portal menggunakan Supabase untuk autentikasi dan penyimpanan data. Salinan lokal `localStorage` tetap dipakai sebagai cadangan pada browser yang sama jika koneksi Supabase sedang gagal.
 
-- Website tetap berfungsi penuh selama sesi berjalan (kirim laporan, ubah status, lihat rekap).
-- Data akan **hilang saat halaman di-refresh atau ditutup**, karena belum ada database sungguhan di baliknya.
+- Masyarakat dapat langsung mengirim laporan tanpa login.
+- Laporan dapat menyertakan satu foto pendukung maksimal 5 MB. Foto dikompresi otomatis di browser.
+- Foto disimpan di Supabase Storage pada bucket `report-photos`, lalu URL-nya ditampilkan di dashboard admin.
+- Pelapor dapat menghapus salinan laporan dari riwayat HP. Data di dashboard admin tetap tersimpan.
+- Daftar laporan dan rekapitulasi tidak ditampilkan kepada masyarakat umum.
+- Dashboard admin hanya tampil untuk akun yang tercatat di tabel `admin_users`.
 
 ### Supaya data tersimpan permanen dan bisa diakses dari luar
 
@@ -55,25 +59,28 @@ Untuk pemakaian nyata di kelurahan, sambungkan formulir ke penyimpanan sungguhan
 </script>
 ```
 
-6. Setelah itu, masuk ke Supabase → Authentication → Users.
-7. Buat akun admin (contoh: admin@kelurahan.go.id) dengan email/password.
-8. Setelah akun dibuat, jalankan SQL untuk menambahkan akun itu ke tabel `public.admin_users`:
+6. Simpan file, lalu buka situs di browser. Jika konfigurasi benar, data laporan akan tersimpan di cloud dan bisa diakses dari perangkat lain.
+
+### Membuat akun admin
+
+1. Di Supabase buka **Authentication → Users → Add user**, lalu buat akun dengan email `admin@kelurahan-sukamaju.id`.
+2. Jalankan ulang seluruh isi `supabase.sql` di SQL Editor. Bagian terakhir akan mencari UID akun berdasarkan email secara otomatis.
 
 ```sql
-insert into public.admin_users (user_id, email, nama, is_active)
-select au.id, au.email, 'Admin Kelurahan', true
-from auth.users au
-where au.email = 'admin@kelurahan.go.id';
+insert into public.admin_users (user_id)
+select id from auth.users
+where lower(email) = lower('admin@kelurahan-sukamaju.id')
+on conflict (user_id) do nothing;
 ```
 
-9. Simpan file, lalu buka situs di browser. Login di panel admin untuk menerima atau menolak laporan.
+Akun yang tidak tercatat di `admin_users` tetap dapat menjadi akun masyarakat, tetapi tidak dapat membuka dashboard admin.
 
-Catatan: kode ini tetap punya mode fallback lokal (`localStorage`) agar Anda bisa demo tanpa koneksi database.
+Masyarakat tidak perlu membuat akun. Mereka dapat langsung mengisi formulir pengaduan. Hanya admin yang membutuhkan akun Supabase untuk membuka dashboard.
 
 ## Menyesuaikan isi
 
 Beberapa hal yang mudah diganti langsung di `index.html`:
 
-- **Nama kelurahan**: cari teks "Kelurahan Sukamaju" di bagian kop surat, ganti sesuai nama kelurahan Anda.
+- **Nama kelurahan**: cari teks "Kelurahan Songgokerto" di bagian kop surat, ganti sesuai nama kelurahan Anda.
 - **Kategori laporan**: cari `<select id="f-kategori">` dan `<select id="filter-kategori">`, tambah/ubah pilihan `<option>` di keduanya secara bersamaan.
 - **Warna & tampilan**: semua warna diatur di bagian `:root { ... }` paling atas file (variabel seperti `--pine`, `--rust`, `--gold`).
